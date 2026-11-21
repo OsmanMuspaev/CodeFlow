@@ -1,0 +1,48 @@
+{
+  "speed": {
+    "delegation": "parallel",
+    "report_words": 350,
+    "handoff_words": 600,
+    "roles": {
+      "orchestrator_model": {
+        "reasoning_effort": "low"
+      },
+      "research_model": {
+        "reasoning_effort": "low"
+      },
+      "design_model": {
+        "reasoning_effort": "low"
+      },
+      "implementation_model": {
+        "reasoning_effort": "low"
+      },
+      "review_model": {
+        "reasoning_effort": "low"
+      }
+    }
+  },
+  "performance": {
+    "allow_premium": true,
+    "delegation": "parallel",
+    "review_policy": "always",
+    "allowed_models": {
+      "gpt-6.2-sol": "standard",
+      "gpt-6-luna": "economy",
+      "gpt-6.2-astra": "premium"
+    },
+    "roles": {
+      "orchestrator_model": {
+        "model": "gpt-6.2-astra",
+        "reasoning_effort": "xhigh"
+      },
+      "implementation_model": {
+        "model": "gpt-6.2-astra",
+        "reasoning_effort": "xhigh"
+      },
+      "review_model": {
+        "model": "gpt-6.2-sol",
+        "reasoning_effort": "high"
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "allowed_models": {
+    "gpt-6.2-sol": "standard",
+    "gpt-6-luna": "economy"
+  },
+  "roles": {
+    "orchestrator_model": {
+      "model": "gpt-6.2-sol",
+      "reasoning_effort": "medium",
+      "fallback": "stop"
+    },
+    "research_model": {
+      "model": "gpt-6-luna",
+      "reasoning_effort": "low",
+      "fallback": "stop"
+    },
+    "design_model": {
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "fallback": "stop"
+    },
+    "implementation_model": {
+      "model": "gpt-6.2-sol",
+      "reasoning_effort": "medium",
+      "fallback": "stop"
+    },
+    "review_model": {
+      "model": "gpt-6-luna",
+      "reasoning_effort": "medium",
+      "fallback": "stop"
+    }
+  },
+  "max_subagents": 2,
+  "report_words": 600,
+  "handoff_words": 900,
+  "soft_token_budget": null,
+  "model_selection": "auto",
+  "profile": "efficiency",
+  "allow_premium": false,
+  "default_mode": "auto",
+  "delegation": "selective",
+  "review_policy": "risk"
+}

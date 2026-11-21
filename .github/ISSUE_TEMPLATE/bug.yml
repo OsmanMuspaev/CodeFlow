@@ -1,0 +1,17 @@
+name: Bug report / Ошибка
+description: Report a reproducible CodexFlow problem / Сообщить о воспроизводимой ошибке
+body:
+  - type: input
+    id: environment
+    attributes:
+      label: Versions / Версии
+      description: Plugin, Codex client, Python, operating system / Плагин, клиент Codex, Python, ОС
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps and result / Шаги и результат
+      description: Include expected behavior and a minimal reproduction. Remove secrets and private paths.
+    validations:
+      required: true

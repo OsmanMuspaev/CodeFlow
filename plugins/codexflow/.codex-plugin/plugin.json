@@ -1,0 +1,6 @@
+{
+  "name": "codexflow",
+  "version": "1.3.0",
+  "description": "Adaptive engineering workflows using native Codex skills and subagents.",
+  "skills": "./skills/"
+}

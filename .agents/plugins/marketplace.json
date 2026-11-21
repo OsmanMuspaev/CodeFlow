@@ -1,0 +1,20 @@
+{
+  "name": "codexflow-local",
+  "interface": {
+    "displayName": "CodexFlow"
+  },
+  "plugins": [
+    {
+      "name": "codexflow",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codexflow"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

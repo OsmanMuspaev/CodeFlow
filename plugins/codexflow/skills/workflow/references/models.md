@@ -1,0 +1,26 @@
+# Model policy
+
+**English** · [Русский](models.ru.md)
+
+Configuration is composed from built-in profiles, user-wide settings, project settings, and run overrides. Model IDs live in JSON. Every default fallback is `stop`. Existing configuration files are changed only through an explicit configuration operation.
+
+`allowed_models` maps approved IDs to `economy`, `standard`, or `premium`. Premium IDs require `allow_premium: true`, set by the performance profile or an explicit override. Astra IDs must be classified as premium. Known forbidden aliases must be rejected. The resolver cannot infer prices or authenticate opaque aliases. An unknown parent ID is unconfirmed; a known parent outside policy is rejected.
+
+Each role has `model` (exact ID or null), `reasoning_effort` (null inherits), and `fallback` (`stop`, `parent`, or an allowed ID). A null model uses its fallback. A parent fallback is explicit permission to inherit the approved parent, including its cost tier. The default efficiency profile uses Sol for primary work and Luna for children. Performance requests Astra for the parent and Sol for review.
+
+## Selecting a generation
+
+- Bundled `model_selection: "auto"` snapshots the native catalog once per workflow via `catalog --output PATH`. It uses `codex debug models` when available, with a short timeout. Only visible, exact versioned GPT Sol/Luna/Astra IDs and their reasoning capabilities reach the snapshot. No additional model request is made.
+- Auto selects the numerically newest supported model in the role's configured family and at or above its configured baseline. Sol/standard, Luna/economy and explicitly allowed Astra/premium are eligible for automatic selection. An explicit availability list, when supplied by the client, narrows candidates further. A catalog listing alone doesn't prove account access.
+- Keep a known eligible main session model when it meets the baseline. With an opaque session, the selected target is a recommendation and the actual model stays unconfirmed. Both main roles must be compatible with one session. If catalog discovery yields nothing usable, use the configured baseline under the same policy checks. Native launch failure follows the configured fallback, normally `stop`.
+- Set `model_selection: "pinned"` to retain exact IDs. Existing project configs without the setting are pinned for backward compatibility. To opt in, add `"model_selection": "auto"` to the project file.
+
+Resolve each used role via `resolve ROLE [--catalog PATH] [--parent ID] [--available ID ...]`. Supply these optional flags only when the client exposes the corresponding evidence. A missing flag means unknown, not unavailable. Do not scan private Codex session logs, ask another model to identify itself, or spend calls trying to obtain an unavailable runtime ID. The resolver's `model`/`requested_model` is an authorized target; `actual_model` is null when unconfirmed. For children it remains null until native launch results provide evidence; resolution alone never verifies an actual child model.
+
+When parent identity is missing and both main roles have explicit approved target IDs, continue the workflow in the existing main session. Show the configured target and `actual=unconfirmed` once and preserve that fact in the report. Do not repeatedly ask the user to select a model and say “continue”. Config alone never proves that the parent is Sol or medium reasoning. A known forbidden/disallowed parent or known main-role mismatch still blocks. If a main role only has `fallback: parent` and no explicit model and the parent ID is unknown, ask for an explicit approved target configuration instead of guessing. An empty allowlist still blocks.
+
+The main session model/reasoning is controlled by the user's Codex client; the skill cannot switch it or guarantee its cost when metadata is missing. Users who need a guaranteed parent model must select it in the client. Continuing with unconfirmed identity is transparent operation in the existing session, not authorization to select another model or auto-upgrade. Premium policy applies to every model ID CodexFlow can see/request; an opaque host model cannot be independently certified by a skill.
+
+For a native model selection failure run resolve with `--failed ID` and any actual client evidence; disclose the error and exact authorized fallback. Attempt only that fallback once. A known unavailable configured target with fallback `stop` is blocked even when parent identity is unknown. A `parent` fallback requires a known approved parent ID; never invent it. Do not silently omit requested child reasoning; report unsupported settings and use an explicitly authorized inherited configuration or stop. Unknown availability can be resolved by making the needed native request; no extra probe/LLM call is required.
+
+Current fresh-context spawn APIs differ: use their actual schema. In environments exposing `fork_turns`, select `none`; never pass full conversation. Custom native read-only roles may be configured by the user in local Codex if supported, but CodexFlow does not overwrite `.codex/config.toml` or assume plugin role documents register agents. If a client lacks per-child model controls, do not fabricate parameters or use CLI subprocesses.
