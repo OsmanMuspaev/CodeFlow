@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the supported CodexFlow compatibility package without dependencies."""
+"""Validate the supported CodeFlow compatibility package without dependencies."""
 import json
 from pathlib import Path
 import re
@@ -25,9 +25,9 @@ def validate_docs(root):
 def validate(root):
     root = Path(root).resolve()
     validate_docs(root)
-    plugin = root / 'plugins/codexflow'
+    plugin = root / 'plugins/codeflow'
     manifest = json.loads((plugin / '.codex-plugin/plugin.json').read_text())
-    assert manifest['name'] == 'codexflow'
+    assert manifest['name'] == 'codeflow'
     assert re.fullmatch(r'\d+\.\d+\.\d+', manifest['version'])
     assert manifest['skills'] == './skills/'
     market = json.loads((root / '.agents/plugins/marketplace.json').read_text())
@@ -53,7 +53,7 @@ def validate(root):
             assert cfg['roles'][role]['model'] in cfg['allowed_models']
     for path in plugin.rglob('*'):
         assert not path.is_symlink(), path
-    return 'CodexFlow package valid'
+    return 'CodeFlow package valid'
 
 
 if __name__ == '__main__':

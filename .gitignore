@@ -6,3 +6,6 @@ __pycache__/
 .venv/
 .env
 .env.*
+
+# The optional usage installer stores absolute local paths.
+/.codex/hooks.json

@@ -1,14 +1,14 @@
 {
-  "name": "codexflow-local",
+  "name": "codeflow-local",
   "interface": {
-    "displayName": "CodexFlow"
+    "displayName": "CodeFlow"
   },
   "plugins": [
     {
-      "name": "codexflow",
+      "name": "codeflow",
       "source": {
         "source": "local",
-        "path": "./plugins/codexflow"
+        "path": "./plugins/codeflow"
       },
       "policy": {
         "installation": "AVAILABLE",

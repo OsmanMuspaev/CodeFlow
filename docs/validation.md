@@ -2,6 +2,14 @@
 
 **English** · [Русский](validation.ru.md) · [Home](../README.md)
 
+## v1.4.0
+
+The renamed CodeFlow package installed as `codeflow@codeflow-local` in an isolated Codex home. It read a run and user configuration created by the previous CodexFlow package from their original storage paths.
+
+Local tests cover real command exit codes and logs, reuse when watched inputs match, drift and dependency invalidation, reopen without resetting repairs, and opt-in hook registration. The hook tests replay shaped PostToolUse and PostModelRequest events. They verify exact turn association, exclusion of unrelated events and prompts, and preservation of existing hooks. This does not establish end-to-end event delivery in a running Codex session.
+
+An isolated CLI installation ran real unit checks for two series items. After one watched file changed, only that item became stale. The same installed package exercised doctor and the usage setup, event replay, summary and disable path.
+
 ## v1.3.0
 
 Run the standard-library tests and package validator:

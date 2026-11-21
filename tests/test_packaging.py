@@ -32,7 +32,7 @@ class PackagingTests(unittest.TestCase):
             self.assertEqual(json.loads(result.stdout)['allowed_models'], {'gpt-6.2-sol': 'standard', 'gpt-6-luna': 'economy'})
 
     def test_begin_validates_model_before_creating_run(self):
-        script = ROOT / 'plugins/codexflow/skills/workflow/scripts/flow.py'
+        script = ROOT / 'plugins/codeflow/skills/workflow/scripts/flow.py'
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             env = dict(os.environ, CODEX_HOME=str(root / 'codex-home'))
@@ -54,7 +54,7 @@ class PackagingTests(unittest.TestCase):
 
     def test_config_init_reads_effective_defaults_without_overwriting(self):
         with tempfile.TemporaryDirectory() as tmp:
-            script = ROOT / 'plugins/codexflow/skills/workflow/scripts/flow.py'
+            script = ROOT / 'plugins/codeflow/skills/workflow/scripts/flow.py'
             args = [sys.executable, str(script), '--root', tmp, 'config', '--init']
             result = subprocess.run(args, capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stderr)
@@ -70,7 +70,7 @@ class PackagingTests(unittest.TestCase):
             self.assertEqual(config_file.read_bytes(), before)
 
     def test_profile_layers_and_run_policy_survive_config_changes(self):
-        script = ROOT / 'plugins/codexflow/skills/workflow/scripts/flow.py'
+        script = ROOT / 'plugins/codeflow/skills/workflow/scripts/flow.py'
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             env = dict(os.environ, CODEX_HOME=str(root / 'codex-home'))
@@ -121,7 +121,7 @@ class PackagingTests(unittest.TestCase):
 
     def test_compact_start_preserves_checkpoint_identity(self):
         with tempfile.TemporaryDirectory() as tmp:
-            script = ROOT / 'plugins/codexflow/skills/workflow/scripts/flow.py'
+            script = ROOT / 'plugins/codeflow/skills/workflow/scripts/flow.py'
             task = Path(tmp) / 'task.txt'; task.write_text('Fix a local bug')
             result = subprocess.run([sys.executable, str(script), '--root', tmp, '--compact', 'start', '--task-file', str(task), '--mode', 'quick'], capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stderr)
@@ -135,7 +135,7 @@ class PackagingTests(unittest.TestCase):
 
     def test_resolve_cli_continues_with_honest_unconfirmed_identity(self):
         with tempfile.TemporaryDirectory() as tmp:
-            script = ROOT / 'plugins/codexflow/skills/workflow/scripts/flow.py'
+            script = ROOT / 'plugins/codeflow/skills/workflow/scripts/flow.py'
             result = subprocess.run([sys.executable, str(script), '--root', tmp, 'resolve', 'orchestrator_model'], capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stderr)
             selected = json.loads(result.stdout)
@@ -144,9 +144,9 @@ class PackagingTests(unittest.TestCase):
             self.assertEqual(selected['runtime_verification'], 'unconfirmed')
 
     def test_package_and_cli_error_messages(self):
-        self.assertEqual(module('validate_package').validate(ROOT), 'CodexFlow package valid')
+        self.assertEqual(module('validate_package').validate(ROOT), 'CodeFlow package valid')
         with tempfile.TemporaryDirectory() as tmp:
-            script = ROOT / 'plugins/codexflow/skills/workflow/scripts/flow.py'
+            script = ROOT / 'plugins/codeflow/skills/workflow/scripts/flow.py'
             result = subprocess.run([sys.executable, str(script), '--root', tmp, 'status', '../outside'], capture_output=True, text=True)
             self.assertEqual(result.returncode, 2)
             self.assertIn('Invalid run ID', result.stderr)

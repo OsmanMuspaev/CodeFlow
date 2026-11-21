@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CodexFlow storage, model policy and native catalog lookup. No model calls."""
+"""CodeFlow storage, model policy and native catalog lookup. No model calls."""
 import argparse
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -331,7 +331,7 @@ class Store:
         finally:
             lock.unlink()
 
-    def start(self, task, mode=None, policy=None, catalog=None):
+    def start(self, task, mode=None, policy=None, catalog=None, models=None):
         policy = config(self.root) if policy is None else policy
         if mode is None:
             mode = policy['default_mode']
@@ -346,6 +346,8 @@ class Store:
         (path / 'task.md').write_text(task + '\n', encoding='utf-8')
         state = {'version': 1, 'run_id': run_id, 'mode': mode, 'status': 'running', 'created_at': now(), 'updated_at': now(), 'revision': 0, 'repair_iterations': 0, 'stages': {s: {'status': 'pending'} for s in STAGES}, 'usage': {'tokens': None, 'source': 'not exposed'}}
         state['policy'] = policy
+        if models is not None:
+            state['main_models'] = models
         if catalog is not None:
             atomic(path / 'model-catalog.json', catalog)
         atomic(path / 'state.json', state)
@@ -396,6 +398,12 @@ class Store:
                 artifact = self.stage_update(state, path, entry, inline_skips)
                 if artifact is not None:
                     artifacts.append(artifact)
+            if state['status'] == 'complete' and (path / 'journal.json').exists():
+                from journal import load_journal, series_status
+                evidence = load_journal(path)
+                items = series_status(self, evidence['series'], evidence['checks'])
+                if any(item['effective_status'] != 'complete' for item in items.values()):
+                    raise ValueError('Finish or recheck all series items before completing the run')
             for target, data in artifacts:
                 atomic_bytes(target, data)
             # State commits the whole batch; orphaned files after interruption
@@ -562,7 +570,7 @@ def main():
                            for role in MAIN_ROLES}
             if len({model['requested_model'] for model in main_models.values()}) != 1:
                 raise ValueError('Main roles need the same session model')
-            result = store.start(args.task_file.read_text(encoding='utf-8'), args.mode, policy, catalog)
+            result = store.start(args.task_file.read_text(encoding='utf-8'), args.mode, policy, catalog, main_models)
         elif args.op == 'record':
             result = store.record(args.run_id, read(args.file), args.revision)
         elif args.op == 'history': result = store.history()
@@ -620,7 +628,7 @@ def main():
             )}
         print(json.dumps(result, ensure_ascii=False, indent=2))
     except (ValueError, OSError, KeyError, TypeError) as exc:
-        parser.exit(2, 'codexflow: ' + str(exc) + '\n')
+        parser.exit(2, 'codeflow: ' + str(exc) + '\n')
 
 
 if __name__ == '__main__':

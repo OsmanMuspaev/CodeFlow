@@ -16,7 +16,7 @@ def install(project):
             raise ValueError('Refusing symlink: ' + str(path))
     if destination.exists():
         raise ValueError('Skill already exists; inspect it before manually updating')
-    source = Path(__file__).resolve().parents[1] / 'plugins/codexflow/skills/workflow'
+    source = Path(__file__).resolve().parents[1] / 'plugins/codeflow/skills/workflow'
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
     return destination
@@ -29,4 +29,4 @@ if __name__ == '__main__':
     try:
         print(install(args.project))
     except (OSError, ValueError) as exc:
-        sys.exit('codexflow: ' + str(exc))
+        sys.exit('codeflow: ' + str(exc))

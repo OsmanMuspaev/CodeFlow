@@ -6,7 +6,7 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / 'plugins/codexflow/skills/workflow'
+SKILL = ROOT / 'plugins/codeflow/skills/workflow'
 spec = importlib.util.spec_from_file_location('flow', SKILL / 'scripts/flow.py')
 flow = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(flow)

@@ -12,7 +12,7 @@ Profiles are presets. Task depth (auto, QUICK, STANDARD, FULL) is a separate set
 
 Settings apply in order from built-in defaults and the selected profile to user-wide settings, project settings and per-run overrides. The profile itself follows the same precedence. Custom fields continue to override a newly selected profile. Role fields merge individually. An explicit allowed_models replaces the whole allowlist, so custom role IDs must also be in that map. Old complete project configs retain exact model IDs unless they opt in to auto. Use a minimal override file to keep inheriting future defaults.
 
-- User-wide settings are in `$CODEX_HOME/codexflow/config.json` (normally `~/.codex/codexflow/config.json`). They apply to CodexFlow in every project.
+- User-wide settings are in `$CODEX_HOME/codexflow/config.json` (normally `~/.codex/codexflow/config.json`). They apply to CodeFlow in every project.
 - Project settings are in `.codexflow/config.json`.
 - A run override is stored in the effective policy in state.json. Resume reuses that policy.
 
@@ -21,10 +21,10 @@ Adjust `default_mode`, `model_selection` (auto/pinned), `allowed_models`, `allow
 Examples in Codex:
 
 ```text
-$codexflow:workflow --profile speed --set max_subagents=1 Обнови тесты
-$codexflow:workflow config --global --save --profile efficiency
-$codexflow:workflow config --save --profile performance --set max_subagents=1
-$codexflow:workflow config --save --set roles.review_model.reasoning_effort="high"
+$codeflow:workflow --profile speed --set max_subagents=1 Обнови тесты
+$codeflow:workflow config --global --save --profile efficiency
+$codeflow:workflow config --save --profile performance --set max_subagents=1
+$codeflow:workflow config --save --set roles.review_model.reasoning_effort="high"
 ```
 
 The helper accepts `--profile` and repeated `--set` before its subcommand, for example `flow.py --profile speed --set max_subagents=1 config --save`. When calling a shell, quote the complete key=JSON argument to retain JSON string quotes. Inspect with `config` or `config --global`. Only explicit `--init` or `--save` writes a persistent config.

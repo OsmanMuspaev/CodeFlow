@@ -53,15 +53,15 @@ jobs:
           import subprocess
           import sys
 
-          version = json.loads(Path('plugins/codexflow/.codex-plugin/plugin.json').read_text())['version']
+          version = json.loads(Path('plugins/codeflow/.codex-plugin/plugin.json').read_text())['version']
           if os.environ['RELEASE_TAG'] != f'v{version}':
               sys.exit('Release tag must match the plugin manifest version')
-          package = Path('dist') / f'codexflow-v{version}'
+          package = Path('dist') / f'codeflow-v{version}'
           subprocess.run([sys.executable, 'scripts/prepare_marketplace.py', str(package)], check=True)
           shutil.make_archive(str(package), 'zip', root_dir=package.parent, base_dir=package.name)
           PY
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: codexflow-${{ github.ref_name }}
-          path: dist/codexflow-*.zip
+          name: codeflow-${{ github.ref_name }}
+          path: dist/codeflow-*.zip
           if-no-files-found: error

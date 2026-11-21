@@ -1,14 +1,14 @@
-# CodexFlow
+# CodeFlow
 
 [English](README.md) · **Русский**
 
-![Версия 1.3.0](https://img.shields.io/badge/release-v1.3.0-2357d8)
+![Версия 1.4.0](https://img.shields.io/badge/release-v1.4.0-2357d8)
 ![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776ab)
 [![Лицензия MIT](https://img.shields.io/badge/license-MIT-16865e)](LICENSE)
 
-**Workflow для OpenAI Codex с сохранением прогресса.** Передайте задачу, и CodexFlow подберёт глубину работы, сохранит результаты и запустит реальные проверки проекта. Небольшие правки идут коротким путём. Для больших задач можно подключить независимых субагентов и продолжить работу с сохранённого этапа.
+**Workflow для агентской разработки с сохранением прогресса. Первый адаптер работает в OpenAI Codex.** Передайте задачу, и CodeFlow подберёт глубину работы, сохранит результаты и запустит реальные проверки проекта. Небольшие правки идут коротким путём. Для больших задач можно подключить независимых субагентов и продолжить работу с сохранённого этапа.
 
-Это независимый проект. Он использует нативные Skills, субагентов Codex и скрипт на стандартной библиотеке Python.
+Это независимый проект. Название CodeFlow оставляет место для адаптеров других клиентов, а в этой версии поддерживается Codex. Он использует нативные Skills, субагентов Codex и скрипт на стандартной библиотеке Python.
 
 - **QUICK, STANDARD, FULL** задают глубину работы по масштабу и риску.
 - **Efficiency, performance, speed** отдельно настраивают модели, reasoning и делегирование.
@@ -22,26 +22,28 @@
 
 ```sh
 codex plugin marketplace add .
-codex plugin add codexflow@codexflow-local
+codex plugin add codeflow@codeflow-local
 ```
 
-Для отдельного Skill запустите установщик из папки CodexFlow:
+Для отдельного Skill запустите установщик из папки CodeFlow:
 
 ```sh
 python3 scripts/install_skill.py /absolute/path/to/your-project
 ```
 
-Выберите один вариант установки. Откройте новую сессию Codex в целевом проекте. Для плагина используйте `$codexflow:workflow`, для отдельного Skill — `$workflow`. Если имя отличается, выберите навык в меню клиента.
+Выберите один вариант установки. Откройте новую сессию Codex в целевом проекте. Для плагина используйте `$codeflow:workflow`, для отдельного Skill — `$workflow`. Если имя отличается, выберите навык в меню клиента.
+
+**Переход с CodexFlow.** Установите новый плагин и используйте `$codeflow:workflow`. Проектные настройки и история остаются в `.codexflow/`, общие настройки — в `$CODEX_HOME/codexflow/config.json`. Старый плагин можно удалить отдельно после проверки нового.
 
 ## Первый запуск
 
 Введите в чате Codex:
 
 ```text
-$codexflow:workflow --quick Исправь проверку пустого ввода и запусти тесты
-$codexflow:workflow Добавь пагинацию в список заказов
-$codexflow:workflow status
-$codexflow:workflow resume <run-id>
+$codeflow:workflow --quick Исправь проверку пустого ввода и запусти тесты
+$codeflow:workflow Добавь пагинацию в список заказов
+$codeflow:workflow status
+$codeflow:workflow resume <run-id>
 ```
 
 | Профиль | Запрос для главного агента | Ревью и делегирование |
@@ -53,12 +55,12 @@ $codexflow:workflow resume <run-id>
 Во всех профилях выполняются необходимые проверки. Профиль задаёт желаемую модель и reasoning, а активной сессией управляет клиент Codex. При смене главной модели используйте его меню выбора. Плагин может выбрать более свежие совместимые версии Sol, Luna и явно разрешённой Astra из нативного каталога. Доступность модели в каталоге сама по себе не подтверждает доступ аккаунта.
 
 ```text
-$codexflow:workflow --profile speed --set max_subagents=1 Обнови тесты парсера
-$codexflow:workflow config --save --set roles.review_model.reasoning_effort="high"
-$codexflow:workflow config --global --save --profile efficiency
+$codeflow:workflow --profile speed --set max_subagents=1 Обнови тесты парсера
+$codeflow:workflow config --save --set roles.review_model.reasoning_effort="high"
+$codeflow:workflow config --global --save --profile efficiency
 ```
 
-Приоритет настроек растёт от встроенного профиля к пользовательскому файлу, проектному файлу и параметрам запуска. Пути и полный список параметров есть в [справочнике конфигурации](plugins/codexflow/skills/workflow/references/profiles.ru.md).
+Приоритет настроек растёт от встроенного профиля к пользовательскому файлу, проектному файлу и параметрам запуска. Пути и полный список параметров есть в [справочнике конфигурации](plugins/codeflow/skills/workflow/references/profiles.ru.md).
 
 ## Как это работает
 
@@ -80,12 +82,26 @@ flowchart LR
 
 Состояние хранится в `.codexflow/runs/<run-id>/`. QUICK записывает несколько этапов вместе, а причины пропусков сохраняет в состоянии. При продолжении плагин восстанавливает записанные настройки и прогресс, затем сверяет их с текущими файлами. Расход токенов можно указать, когда клиент его сообщает. Экономия токенов по сравнению с обычным Codex пока не установлена.
 
+## Диагностика, восстановление и статистика
+
+```text
+$codeflow:workflow doctor
+$codeflow:workflow --series Проверь и обнови четыре ноутбука по отдельности
+$codeflow:workflow status <run-id>
+$codeflow:workflow usage enable
+$codeflow:workflow usage show <run-id>
+```
+
+Проверки фиксируют код выхода, время и отпечатки отслеживаемых файлов. При продолжении CodeFlow смотрит, актуальны ли сохранённые результаты. Сначала идут целевые проверки, затем полный набор, когда этого требует проект или риск. Режим серии хранит по отдельности подтверждения для каждого элемента и его зависимостей.
+
+Сбор токенов включается отдельно в каждом проекте. После включения подтвердите хуки в Codex. Статистика хранится локально для связанных запросов, может быть частичной и не показывает остаток лимита подписки. Подробности в [справочнике журнала](plugins/codeflow/skills/workflow/references/journal.ru.md).
+
 ## Документация
 
 | Раздел | Что внутри |
 |---|---|
 | [Архитектура](docs/architecture.ru.md) | Этапы, выбор моделей, состояние и восстановление |
-| [Конфигурация](plugins/codexflow/skills/workflow/references/profiles.ru.md) | Профили, настройки ролей и приоритеты |
+| [Конфигурация](plugins/codeflow/skills/workflow/references/profiles.ru.md) | Профили, настройки ролей и приоритеты |
 | [Совместимость](docs/research.ru.md) | Исходные решения и ссылки на Codex |
 | [Проверки](docs/validation.ru.md) | Автотесты, реальные запуски и пределы сравнения |
 | [История изменений](CHANGELOG.ru.md) | Что появилось в каждой версии |

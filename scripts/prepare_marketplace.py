@@ -12,7 +12,7 @@ def prepare(destination):
         raise ValueError('Destination already exists; choose a new directory')
     root = Path(__file__).resolve().parents[1]
     destination.mkdir(parents=True)
-    shutil.copytree(root / 'plugins/codexflow', destination / 'plugins/codexflow', ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
+    shutil.copytree(root / 'plugins/codeflow', destination / 'plugins/codeflow', ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
     catalog = destination / '.agents/plugins/marketplace.json'
     catalog.parent.mkdir(parents=True)
     shutil.copyfile(root / '.agents/plugins/marketplace.json', catalog)
@@ -27,4 +27,4 @@ if __name__ == '__main__':
     try:
         print(prepare(args.destination))
     except (OSError, ValueError) as exc:
-        sys.exit('codexflow: ' + str(exc))
+        sys.exit('codeflow: ' + str(exc))
